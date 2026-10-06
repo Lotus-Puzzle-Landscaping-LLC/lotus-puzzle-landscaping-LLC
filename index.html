@@ -432,7 +432,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         const uiText = {
             en: {
                 subtitle: "Garden Design & Maintenance",
@@ -557,14 +557,233 @@
         function setLanguage(lang) {
             currentLang = lang;
             
-            // Actualizar botones de idioma
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = Array.from(document.querySelectorAll('.lang-btn')).find(btn => btn.textContent.trim().toLowerCase() === lang);
             if (activeBtn) activeBtn.classList.add('active');
 
-            // Actualizar textos UI estáticos
             const ui = uiText[lang];
             document.getElementById('txt-subtitle').innerText = ui.subtitle;
             document.getElementById('txt-cart-btn').innerText = ui.cartBtn;
             document.getElementById('txt-services-title').innerText = ui.servicesTitle;
-            document.getElementById('
+            document.getElementById('txt-services-desc').innerText = ui.servicesDesc;
+            document.getElementById('txt-back-btn').innerText = ui.backBtn;
+            document.getElementById('whatsapp-main-btn').querySelector('span').innerText = ui.whatsappDirect;
+            document.getElementById('txt-modal-title').innerText = ui.modalTitle;
+            document.getElementById('txt-modal-desc').innerText = ui.modalDesc;
+            document.getElementById('txt-send-btn').innerText = ui.sendBtn;
+
+            const currentCatId = document.getElementById('products-view').getAttribute('data-current-cat');
+            if (currentCatId) {
+                renderProducts(currentCatId);
+                const catObj = db.categories[lang].find(c => c.id === currentCatId);
+                if (catObj) document.getElementById('category-title').innerText = catObj.name;
+            }
+
+            renderCategories();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById("categories-container");
+            container.innerHTML = "";
+            const cats = db.categories[currentLang];
+            cats.forEach(cat => {
+                const card = document.createElement("div");
+                card.className = "category-card";
+                card.onclick = () => showProducts(cat.id);
+                card.innerHTML = `
+                    <img src="${cat.img}" class="category-img" alt="${cat.name}" onerror="this.src='https://via.placeholder.com/400x180?text=Landscaping'">
+                    <div class="category-content">
+                        <div>
+                            <h3>${cat.name}</h3>
+                            <p>${cat.desc}</p>
+                        </div>
+                        <button class="btn cat-btn-text">${uiText[currentLang].viewServices}</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function showProducts(catId) {
+            const catObj = db.categories[currentLang].find(c => c.id === catId);
+            document.getElementById("main-menu").style.display = "none";
+            const productsView = document.getElementById("products-view");
+            productsView.style.display = "block";
+            productsView.setAttribute('data-current-cat', catId);
+            document.getElementById("category-title").innerText = catObj ? catObj.name : "";
+            
+            renderProducts(catId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderProducts(catId) {
+            const prodContainer = document.getElementById("products-container");
+            prodContainer.innerHTML = "";
+            const products = db.products[currentLang][catId];
+            
+            products.forEach(prod => {
+                const qty = cart[prod] || 0;
+                const li = document.createElement("li");
+                li.className = "product-item";
+                li.innerHTML = `
+                    <span class="product-name">🌿 ${prod}</span>
+                    <div class="qty-control">
+                        <button class="qty-btn" onclick="updateQty('${prod}', -1)">-</button>
+                        <span class="qty-val" id="qty-${prod}">${qty}</span>
+                        <button class="qty-btn" onclick="updateQty('${prod}', 1)">+</button>
+                    </div>
+                `;
+                prodContainer.appendChild(li);
+            });
+        }
+
+        function updateQty(productName, change) {
+            let currentQty = cart[productName] || 0;
+            currentQty += change;
+            if (currentQty < 0) currentQty = 0;
+
+            if (currentQty === 0) {
+                delete cart[productName];
+            } else {
+                cart[productName] = currentQty;
+            }
+
+            let totalItems = 0;
+            for (let key in cart) {
+                totalItems += cart[key];
+            }
+            document.getElementById("cart-count").innerText = totalItems;
+
+            const qtyEl = document.getElementById(`qty-${productName}`);
+            if (qtyEl) {
+                qtyEl.innerText = currentQty;
+            }
+        }
+
+        function showMainMenu() {
+            document.getElementById("products-view").style.display = "none";
+            document.getElementById("main-menu").style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openCartModal() {
+            const listEl = document.getElementById("cart-items-list");
+            listEl.innerHTML = "";
+            const keys = Object.keys(cart);
+
+            if(keys.length === 0) {
+                listEl.innerHTML = `<li>${uiText[currentLang].emptyCart}</li>`;
+            } else {
+                keys.forEach((item) => {
+                    listEl.innerHTML += `<li>${item} (x${cart[item]}) <button class="remove-item" onclick="removeEntireItem('${item}')">❌</button></li>`;
+                });
+            }
+            document.getElementById("cart-modal").style.display = "flex";
+        }
+
+        function closeCartModal() {
+            document.getElementById("cart-modal").style.display = "none";
+        }
+
+        function removeEntireItem(productName) {
+            delete cart[productName];
+            let totalItems = 0;
+            for (let key in cart) {
+                totalItems += cart[key];
+            }
+            document.getElementById("cart-count").innerText = totalItems;
+            
+            const qtyEl = document.getElementById(`qty-${productName}`);
+            if (qtyEl) {
+                qtyEl.innerText = 0;
+            }
+            openCartModal();
+        }
+
+        function sendWhatsAppQuote() {
+            const keys = Object.keys(cart);
+            if(keys.length === 0) {
+                alert(uiText[currentLang].selectAlert);
+                return;
+            }
+            
+            let message = uiText[currentLang].whatsappMsg;
+            keys.forEach((item, i) => {
+                message += `${i+1}. ${item} (Qty: ${cart[item]})%0A`;
+            });
+            
+            const phoneNumber = "19086567511";
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+
+        setLanguage('en');
+
+        const canvas = document.getElementById("seasonal-canvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+        const particleCount = 30;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        const month = new Date().getMonth();
+        let season = "spring";
+        if (month === 11 || month === 0 || month === 1) season = "winter";
+        else if (month >= 2 && month <= 4) season = "spring";
+        else if (month >= 5 && month <= 7) season = "summer";
+        else season = "autumn";
+
+        const emojiSets = {
+            spring: ["🌸", "🌷", "🌹", "🌻", "🌼"],
+            winter: ["❄️", "🌨️", "⭐", "⚪"],
+            summer: ["🍃", "🌿", "🌱", "🍀"],
+            autumn: ["🍂", "🍁", "🌰", "🌾"]
+        };
+
+        for (let i = 0; i < particleCount; i++) {
+            const currentEmojis = emojiSets[season];
+            const randomEmoji = currentEmojis[Math.floor(Math.random() * currentEmojis.length)];
+            
+            particles.push({
+                emoji: randomEmoji,
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                speed: Math.random() * 1.5 + 0.8,
+                size: Math.random() * 14 + 12,
+                angle: Math.random() * 360,
+                spin: Math.random() * 0.02 - 0.01
+            });
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle);
+                ctx.font = `${p.size}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(p.emoji, 0, 0);
+                ctx.restore();
+
+                p.y += p.speed;
+                p.x += Math.sin(p.y / 40) * 0.6;
+                p.angle += p.spin;
+
+                if (p.y > canvas.height + 20) {
+                    p.y = -20;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+
+            requestAnimationFrame(drawParticles);
+        }
+
+        drawParticles();
+    </script>

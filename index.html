@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotus Puzzle Landscaping - Cotizaciones</title>
+    <title>Lotus Puzzle Landscaping - Quotes</title>
     <style>
         :root {
             --primary-green: #2e7d32;
@@ -87,13 +87,14 @@
 
         .lang-switch {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .lang-btn {
             background: transparent;
             border: 1px solid #fff;
             color: #fff;
-            padding: 5px 10px;
+            padding: 5px 9px;
             border-radius: 15px;
             cursor: pointer;
             font-size: 0.8rem;
@@ -377,327 +378,193 @@
         <div class="header-brand">
             <img src="logo.jpeg" alt="Lotus Puzzle Landscaping Logo" onerror="this.src='https://via.placeholder.com/70?text=LOGO'">
             <div>
-                <h1 data-es="Lotus Puzzle Landscaping" data-en="Lotus Puzzle Landscaping">Lotus Puzzle Landscaping</h1>
-                <p data-es="Diseño y Cuidado de Jardines" data-en="Garden Design & Maintenance">Diseño y Cuidado de Jardines</p>
+                <h1>Lotus Puzzle Landscaping</h1>
+                <p id="txt-subtitle">Garden Design & Maintenance</p>
             </div>
         </div>
         <div class="header-controls">
             <button class="header-cart-btn" onclick="openCartModal()">
-                🛒 <span data-es="Cotización" data-en="Quote">Cotización</span> (<span id="cart-count">0</span>)
+                🛒 <span id="txt-cart-btn">Quote</span> (<span id="cart-count">0</span>)
             </button>
             <div class="lang-switch">
-                <button class="lang-btn active" onclick="setLanguage('es')">ES</button>
-                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="setLanguage('es')">ES</button>
+                <button class="lang-btn" onclick="setLanguage('pt')">PT</button>
+                <button class="lang-btn" onclick="setLanguage('zh')">ZH</button>
             </div>
         </div>
     </header>
 
     <div class="container" id="main-menu">
         <div class="intro">
-            <h2 data-es="Nuestros Servicios" data-en="Our Services">Nuestros Servicios</h2>
-            <p data-es="Selecciona una categoría para ver los trabajos que ofrecemos. Cotizaciones personalizadas." data-en="Select a category to see the jobs we offer. Personalized quotes.">Selecciona una categoría para ver los trabajos que ofrecemos. Cotizaciones personalizadas.</p>
+            <h2 id="txt-services-title">Our Services</h2>
+            <p id="txt-services-desc">Select a category to see the jobs we offer. Personalized quotes.</p>
         </div>
 
         <div class="categories-grid" id="categories-container"></div>
     </div>
 
     <div id="products-view" class="products-view">
-        <button class="btn back-btn" onclick="showMainMenu()" data-es="← Volver a Categorías" data-en="← Back to Categories">← Volver a Categorías</button>
+        <button class="btn back-btn" onclick="showMainMenu()" id="txt-back-btn">← Back to Categories</button>
         <h2 id="category-title" style="color: var(--dark-green); margin-bottom: 30px;"></h2>
         <ul class="products-list" id="products-container"></ul>
     </div>
 
     <div class="float-container">
-        <a href="https://wa.me/19086567511?text=Hola,%20me%20gustaría%20más%20información." target="_blank" class="whatsapp-float" id="whatsapp-main-btn">
-            💬 <span data-es="WhatsApp Directo" data-en="Direct WhatsApp">WhatsApp Directo</span>
+        <a href="https://wa.me/19086567511?text=Hello,%20I%20would%20like%20more%20information." target="_blank" class="whatsapp-float" id="whatsapp-main-btn">
+            💬 <span>Direct WhatsApp</span>
         </a>
     </div>
 
     <div class="modal" id="cart-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 data-es="Tu Solicitud" data-en="Your Request">Tu Solicitud</h2>
+                <h2 id="txt-modal-title">Your Request</h2>
                 <button class="close-modal" onclick="closeCartModal()">×</button>
             </div>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;" data-es="Revisa tu selección y envíala para recibir una cotización personalizada. Los precios varían según el trabajo." data-en="Review your selection and send it to receive a personalized quote. Prices vary based on the job.">Revisa tu selección y envíala para recibir una cotización personalizada. Los precios varían según el trabajo.</p>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;" id="txt-modal-desc">Review your selection and send it to receive a personalized quote. Prices vary based on the job.</p>
             
             <ul class="cart-items" id="cart-items-list"></ul>
             
             <button class="whatsapp-send-btn" onclick="sendWhatsAppQuote()">
-                💬 <span data-es="Enviar por WhatsApp" data-en="Send via WhatsApp">Enviar por WhatsApp</span>
+                💬 <span id="txt-send-btn">Send via WhatsApp</span>
             </button>
         </div>
     </div>
 
     <script>
+        const uiText = {
+            en: {
+                subtitle: "Garden Design & Maintenance",
+                cartBtn: "Quote",
+                servicesTitle: "Our Services",
+                servicesDesc: "Select a category to see the jobs we offer. Personalized quotes.",
+                viewServices: "View Services",
+                backBtn: "← Back to Categories",
+                whatsappDirect: "Direct WhatsApp",
+                modalTitle: "Your Request",
+                modalDesc: "Review your selection and send it to receive a personalized quote. Prices vary based on the job.",
+                emptyCart: "No services selected.",
+                sendBtn: "Send via WhatsApp",
+                selectAlert: "Please select at least one service.",
+                whatsappMsg: "Hello, I would like to request a quote for the following gardening services:%0A"
+            },
+            es: {
+                subtitle: "Diseño y Cuidado de Jardines",
+                cartBtn: "Cotización",
+                servicesTitle: "Nuestros Servicios",
+                servicesDesc: "Selecciona una categoría para ver los trabajos que ofrecemos. Cotizaciones personalizadas.",
+                viewServices: "Ver Servicios",
+                backBtn: "← Volver a Categorías",
+                whatsappDirect: "WhatsApp Directo",
+                modalTitle: "Tu Solicitud",
+                modalDesc: "Revisa tu selección y envíala para recibir una cotización personalizada. Los precios varían según el trabajo.",
+                emptyCart: "No has seleccionado servicios.",
+                sendBtn: "Enviar por WhatsApp",
+                selectAlert: "Selecciona al menos un servicio.",
+                whatsappMsg: "Hola, me gustaría solicitar una cotización para los siguientes servicios de jardinería:%0A"
+            },
+            pt: {
+                subtitle: "Design e Manutenção de Jardins",
+                cartBtn: "Orçamento",
+                servicesTitle: "Nossos Serviços",
+                servicesDesc: "Selecione uma categoria para ver os serviços disponíveis. Orçamentos personalizados.",
+                viewServices: "Ver Serviços",
+                backBtn: "← Voltar às Categorias",
+                whatsappDirect: "WhatsApp Direto",
+                modalTitle: "Seu Pedido",
+                modalDesc: "Revise sua seleção e envie para receber um orçamento personalizado. Os preços variam de acordo com o trabalho.",
+                emptyCart: "Nenhum serviço selecionado.",
+                sendBtn: "Enviar por WhatsApp",
+                selectAlert: "Por favor, selecione pelo menos um serviço.",
+                whatsappMsg: "Olá, gostaria de solicitar um orçamento para os seguintes serviços de jardinagem:%0A"
+            },
+            zh: {
+                subtitle: "园艺设计与维护",
+                cartBtn: "报价单",
+                servicesTitle: "我们的服务",
+                servicesDesc: "选择一个类别查看我们提供的服务。个性化定制报价。",
+                viewServices: "查看服务",
+                backBtn: "← 返回类别",
+                whatsappDirect: "WhatsApp 直连",
+                modalTitle: "您的需求",
+                modalDesc: "检查您的选择并发送以获取个性化报价。价格因工作而异。",
+                emptyCart: "未选择任何服务。",
+                sendBtn: "通过 WhatsApp 发送",
+                selectAlert: "请至少选择一项服务。",
+                whatsappMsg: "您好，我想咨询以下园艺服务的报价：%0A"
+            }
+        };
+
         const db = {
             categories: {
+                en: [
+                    { id: "cat1", name: "Lawn Maintenance", desc: "Mowing, treatments, and weed control.", img: "Mantenimientocesped.jpg" },
+                    { id: "cat2", name: "Plant & Tree Care", desc: "Pruning, planting, and mulching.", img: "cuidadoplantas.jpg" },
+                    { id: "cat3", name: "Landscaping & Hardscaping", desc: "Pavers, walls, fences, and decks.", img: "landscaping.jpg" },
+                    { id: "cat4", name: "Special Services", desc: "Cleanups, pressure washing, and pest control.", img: "servesp.jpg" }
+                ],
                 es: [
                     { id: "cat1", name: "Mantenimiento de Césped", desc: "Cortes, tratamientos y control de maleza.", img: "Mantenimientocesped.jpg" },
                     { id: "cat2", name: "Cuidado de Plantas y Árboles", desc: "Poda, siembra y mulch.", img: "cuidadoplantas.jpg" },
                     { id: "cat3", name: "Paisajismo y Construcción (Hardscaping)", desc: "Adoquines, muros, cercas y decks.", img: "landscaping.jpg" },
                     { id: "cat4", name: "Servicios Especiales", desc: "Limpieza, lavado a presión y control de plagas.", img: "servesp.jpg" }
                 ],
-                en: [
-                    { id: "cat1", name: "Lawn Maintenance", desc: "Mowing, treatments, and weed control.", img: "Mantenimientocesped.jpg" },
-                    { id: "cat2", name: "Plant & Tree Care", desc: "Pruning, planting, and mulching.", img: "cuidadoplantas.jpg" },
-                    { id: "cat3", name: "Landscaping & Hardscaping", desc: "Pavers, walls, fences, and decks.", img: "landscaping.jpg" },
-                    { id: "cat4", name: "Special Services", desc: "Cleanups, pressure washing, and pest control.", img: "servesp.jpg" }
+                pt: [
+                    { id: "cat1", name: "Manutenção de Gramados", desc: "Corte, tratamentos e controle de ervas daninhas.", img: "Mantenimientocesped.jpg" },
+                    { id: "cat2", name: "Cuidado com Plantas e Árvores", desc: "Poda, plantio e cobertura morta (mulch).", img: "cuidadoplantas.jpg" },
+                    { id: "cat3", name: "Paisagismo e Hardscaping", desc: "Pavimentos, muros, cercas e decks.", img: "landscaping.jpg" },
+                    { id: "cat4", name: "Serviços Especiais", desc: "Limpeza, lavagem a pressão e controle de pragas.", img: "servesp.jpg" }
+                ],
+                zh: [
+                    { id: "cat1", name: "草坪护理与维护", desc: "修剪、护理和杂草控制。", img: "Mantenimientocesped.jpg" },
+                    { id: "cat2", name: "植物与树木护理", desc: "修剪、种植和覆盖物鋪設。", img: "cuidadoplantas.jpg" },
+                    { id: "cat3", name: "景观设计与硬质景观", desc: "铺路石、挡土墙、栅栏和露台平台。", img: "landscaping.jpg" },
+                    { id: "cat4", name: "特色专项服务", desc: "清理、高压清洗和害虫防治。", img: "servesp.jpg" }
                 ]
             },
             products: {
+                en: {
+                    cat1: [ "Weekly Grass Cut", "Bi-Weekly Grass Cut", "Weed Control", "Aeration", "Aeration Treatment" ],
+                    cat2: [ "Trimming", "Pruning", "Mulching", "Planting", "Sodding", "Seeding" ],
+                    cat3: [ "Paver Installation", "Patio Installation", "Retaining Walls", "Fence Installation", "Deck Installation", "Hardscaping" ],
+                    cat4: [ "Clean Up", "Pressure Washing", "Mosquito Control (Natural Ingredients)" ]
+                },
                 es: {
                     cat1: [ "Corte de Césped Semanal", "Corte de Césped Quincenal", "Control de Maleza", "Aeración", "Tratamiento de Aeración" ],
                     cat2: [ "Recorte y Perfilado", "Poda", "Mulching / Acolchado", "Plantación", "Instalación de Pasto (Sod)", "Siembra" ],
                     cat3: [ "Instalación de Adoquines", "Instalación de Patios", "Muros de Contención", "Instalación de Cercas", "Instalación de Terrazas/Decks", "Hardscaping (Construcción dura)" ],
                     cat4: [ "Limpieza General de Temporada", "Lavado a Presión", "Control de Mosquitos (Ingredientes Naturales)" ]
                 },
-                en: {
-                    cat1: [ "Weekly Grass Cut", "Bi-Weekly Grass Cut", "Weed Control", "Aeration", "Aeration Treatment" ],
-                    cat2: [ "Trimming", "Pruning", "Mulching", "Planting", "Sodding", "Seeding" ],
-                    cat3: [ "Paver Installation", "Patio Installation", "Retaining Walls", "Fence Installation", "Deck Installation", "Hardscaping" ],
-                    cat4: [ "Clean Up", "Pressure Washing", "Mosquito Control (Natural Ingredients)" ]
+                pt: {
+                    cat1: [ "Corte de Grama Semanal", "Corte de Grama Quinzenal", "Controle de Ervas Daninhas", "Aeração do Solo", "Tratamento de Aeração" ],
+                    cat2: [ "Aparagem e Contorno", "Poda de Árvores e Arbustos", "Aplicação de Mulch", "Plantio de Flores e Plantas", "Instalação de Grama em Rolo (Sod)", "Semeio de Gramados" ],
+                    cat3: [ "Instalação de Pavimentos (Pavers)", "Construção de Pátios", "Muros de Arrimo / Contenção", "Instalação de Cercas", "Instalação de Decks", "Hardscaping (Obras de Pedra/Madeira)" ],
+                    cat4: [ "Limpeza Geral de Temporada", "Lavagem a Alta Pressão", "Controle de Mosquitos (Ingredientes Naturais)" ]
+                },
+                zh: {
+                    cat1: [ "每周割草", "双周割草", "除草与杂草控制", "草坪打孔透气", "草坪打孔护理" ],
+                    cat2: [ "绿篱修剪与造型", "树木与植物修剪", "树皮覆盖 (Mulching)", "花草树木种植", "铺设新草皮 (Sod)", "草坪播种" ],
+                    cat3: [ "铺路石安装", "庭院铺设", "挡土墙建造", "栅栏围栏安装", "木质露台搭建", "硬质景观工程 (Hardscaping)" ],
+                    cat4: [ "季节性全面清理", "高压水枪清洗", "蚊虫防治 (天然成分)" ]
                 }
             }
         };
 
-        let currentLang = 'es';
+        let currentLang = 'en';
         let cart = {};
 
         function setLanguage(lang) {
             currentLang = lang;
+            
+            // Actualizar botones de idioma
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.lang-btn[onclick="setLanguage('${lang}')"]`).classList.add('active');
+            const activeBtn = Array.from(document.querySelectorAll('.lang-btn')).find(btn => btn.textContent.trim().toLowerCase() === lang);
+            if (activeBtn) activeBtn.classList.add('active');
 
-            document.querySelectorAll('[data-es]').forEach(el => {
-                el.innerText = el.getAttribute(`data-${lang}`);
-            });
-
-            document.querySelectorAll('.cat-btn-text').forEach(el => {
-                el.innerText = (lang === 'es' ? 'Ver Servicios' : 'View Services');
-            });
-            document.getElementById('whatsapp-main-btn').querySelector('span').innerText = (lang === 'es' ? 'WhatsApp Directo' : 'Direct WhatsApp');
-
-            const currentCatId = document.getElementById('products-view').getAttribute('data-current-cat');
-            if (currentCatId) {
-                renderProducts(currentCatId);
-                const catName = db.categories[lang].find(c => c.id === currentCatId).name;
-                document.getElementById('category-title').innerText = catName;
-            }
-
-            renderCategories();
-        }
-
-        function renderCategories() {
-            const container = document.getElementById("categories-container");
-            container.innerHTML = "";
-            const cats = db.categories[currentLang];
-            cats.forEach(cat => {
-                const card = document.createElement("div");
-                card.className = "category-card";
-                card.onclick = () => showProducts(cat.id);
-                card.innerHTML = `
-                    <img src="${cat.img}" class="category-img" alt="${cat.name}" onerror="this.src='https://via.placeholder.com/400x180?text=Jardineria'">
-                    <div class="category-content">
-                        <div>
-                            <h3>${cat.name}</h3>
-                            <p>${cat.desc}</p>
-                        </div>
-                        <button class="btn cat-btn-text">${currentLang === 'es' ? 'Ver Servicios' : 'View Services'}</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function showProducts(catId) {
-            const catName = db.categories[currentLang].find(c => c.id === catId).name;
-            document.getElementById("main-menu").style.display = "none";
-            const productsView = document.getElementById("products-view");
-            productsView.style.display = "block";
-            productsView.setAttribute('data-current-cat', catId);
-            document.getElementById("category-title").innerText = catName;
-            
-            renderProducts(catId);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderProducts(catId) {
-            const prodContainer = document.getElementById("products-container");
-            prodContainer.innerHTML = "";
-            const products = db.products[currentLang][catId];
-            
-            products.forEach(prod => {
-                const qty = cart[prod] || 0;
-                const li = document.createElement("li");
-                li.className = "product-item";
-                li.innerHTML = `
-                    <span class="product-name">🌿 ${prod}</span>
-                    <div class="qty-control">
-                        <button class="qty-btn" onclick="updateQty('${prod}', -1)">-</button>
-                        <span class="qty-val" id="qty-${prod}">${qty}</span>
-                        <button class="qty-btn" onclick="updateQty('${prod}', 1)">+</button>
-                    </div>
-                `;
-                prodContainer.appendChild(li);
-            });
-        }
-
-        function updateQty(productName, change) {
-            let currentQty = cart[productName] || 0;
-            currentQty += change;
-            if (currentQty < 0) currentQty = 0;
-
-            if (currentQty === 0) {
-                delete cart[productName];
-            } else {
-                cart[productName] = currentQty;
-            }
-
-            let totalItems = 0;
-            for (let key in cart) {
-                totalItems += cart[key];
-            }
-            document.getElementById("cart-count").innerText = totalItems;
-
-            const qtyEl = document.getElementById(`qty-${productName}`);
-            if (qtyEl) {
-                qtyEl.innerText = currentQty;
-            }
-        }
-
-        function showMainMenu() {
-            document.getElementById("products-view").style.display = "none";
-            document.getElementById("main-menu").style.display = "block";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function openCartModal() {
-            const listEl = document.getElementById("cart-items-list");
-            listEl.innerHTML = "";
-            const keys = Object.keys(cart);
-
-            if(keys.length === 0) {
-                listEl.innerHTML = `<li>${currentLang === 'es' ? 'No has seleccionado servicios.' : 'No services selected.'}</li>`;
-            } else {
-                keys.forEach((item) => {
-                    listEl.innerHTML += `<li>${item} (x${cart[item]}) <button class="remove-item" onclick="removeEntireItem('${item}')">❌</button></li>`;
-                });
-            }
-            document.getElementById("cart-modal").style.display = "flex";
-        }
-
-        function closeCartModal() {
-            document.getElementById("cart-modal").style.display = "none";
-        }
-
-        function removeEntireItem(productName) {
-            delete cart[productName];
-            let totalItems = 0;
-            for (let key in cart) {
-                totalItems += cart[key];
-            }
-            document.getElementById("cart-count").innerText = totalItems;
-            
-            const qtyEl = document.getElementById(`qty-${productName}`);
-            if (qtyEl) {
-                qtyEl.innerText = 0;
-            }
-            openCartModal();
-        }
-
-        function sendWhatsAppQuote() {
-            const keys = Object.keys(cart);
-            if(keys.length === 0) {
-                alert(currentLang === 'es' ? "Selecciona al menos un servicio." : "Please select at least one service.");
-                return;
-            }
-            
-            const greeting = currentLang === 'es' ? "Hola, me gustaría solicitar una cotización para los siguientes servicios de jardinería:%0A" : "Hello, I would like to request a quote for the following gardening services:%0A";
-            let message = greeting;
-            keys.forEach((item, i) => {
-                message += `${i+1}. ${item} (Cantidad: ${cart[item]})%0A`;
-            });
-            
-            const phoneNumber = "19086567511";
-            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-        }
-
-        renderCategories();
-
-        // EFECTO DE MÚLTIPLES EMOJIS FLOTANTES POR TEMPORADA
-        const canvas = document.getElementById("seasonal-canvas");
-        const ctx = canvas.getContext("2d");
-        let particles = [];
-        const particleCount = 30;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-
-        const month = new Date().getMonth();
-        let season = "spring";
-        if (month === 11 || month === 0 || month === 1) season = "winter";
-        else if (month >= 2 && month <= 4) season = "spring";
-        else if (month >= 5 && month <= 7) season = "summer";
-        else season = "autumn";
-
-        // Puedes forzar la temporada para probar: "spring", "winter", "summer", "autumn"
-        // season = "spring"; 
-
-        // Listas con varios emojis variados para cada temporada
-        const emojiSets = {
-            spring: ["🌸", "🌷", "🌹", "🌻", "🌼"],
-            winter: ["❄️", "🌨️", "⭐", "⚪"],
-            summer: ["🍃", "🌿", "🌱", "🍀"],
-            autumn: ["🍂", "🍁", "🌰", "🌾"]
-        };
-
-        for (let i = 0; i < particleCount; i++) {
-            const currentEmojis = emojiSets[season];
-            const randomEmoji = currentEmojis[Math.floor(Math.random() * currentEmojis.length)];
-            
-            particles.push({
-                emoji: randomEmoji,
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                speed: Math.random() * 1.5 + 0.8,
-                size: Math.random() * 14 + 12,
-                angle: Math.random() * 360,
-                spin: Math.random() * 0.02 - 0.01
-            });
-        }
-
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(p => {
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.angle);
-                ctx.font = `${p.size}px Arial`;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(p.emoji, 0, 0);
-                ctx.restore();
-
-                p.y += p.speed;
-                p.x += Math.sin(p.y / 40) * 0.6;
-                p.angle += p.spin;
-
-                if (p.y > canvas.height + 20) {
-                    p.y = -20;
-                    p.x = Math.random() * canvas.width;
-                }
-            });
-
-            requestAnimationFrame(drawParticles);
-        }
-
-        drawParticles();
-    </script>
-</body>
-</html>
+            // Actualizar textos UI estáticos
+            const ui = uiText[lang];
+            document.getElementById('txt-subtitle').innerText = ui.subtitle;
+            document.getElementById('txt-cart-btn').innerText = ui.cartBtn;
+            document.getElementById('txt-services-title').innerText = ui.servicesTitle;
+            document.getElementById('
